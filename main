@@ -1,175 +1,214 @@
-local Decimals = 4
-local Clock = os.clock()
-local ValueText = "Value Is Now :"
-
-
-local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/drillygzzly/Roblox-UI-Libs/main/1%20Tokyo%20Lib%20(FIXED)/Tokyo%20Lib%20Source.lua"))({
-    cheatname = "JohnWARE",
-    gamename = "Vision",
-})
-
-library:init()
-
-local Window1  = library.NewWindow({
-    title = "JohnWARE | Vision",
-    size = UDim2.new(0, 510, 0.6, 6)
-})
-
-local Tab1 = Window1:AddTab("  Goalkeeper  ")
-local Tab2 = Window1:AddTab("  Striker  ")
-local SettingsTab = library:CreateSettingsTab(Window1)
-
-local Section1 = Tab1:AddSection("Hitbox", 1)
-local Section1b = Tab2:AddSection("Section 1", 1)
-
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+local ball = game.Workspace:FindFirstChild("Ball")
 local playerName = game.Players.LocalPlayer.Name
-local pfolder = game.Workspace.CharacterFolder:WaitForChild(playerName)
-local hitbox = pfolder:WaitForChild("GKHitbox")
+local charFolder = game.Workspace:FindFirstChild("CharacterFolder")
+local plrModel = charFolder:FindFirstChild(playerName)
+local humanoidRootPart = plrModel:FindFirstChild("HumanoidRootPart")
+local redPos = Vector3.new(-752, 58, -442)
+local bluePos = Vector3.new(-752, 58, 323)
 
-local originalSize = hitbox.Size
-local hitboxWidth = originalSize.Z
-local hitboxHeight = originalSize.Y
-local hitboxLength = originalSize.X
+local redPart = Instance.new("Part")
+redPart.Size = Vector3.new(1, 1, 1)
+redPart.Position = redPos
+redPart.Anchored = true
+redPart.BrickColor = BrickColor.new("Bright red")
+redPart.Parent = game.Workspace
 
-local hitboxExpanderToggle
+local bluePart = Instance.new("Part")
+bluePart.Size = Vector3.new(1, 1, 1)
+bluePart.Position = bluePos
+bluePart.Anchored = true
+bluePart.BrickColor = BrickColor.new("Bright blue")
+bluePart.Parent = game.Workspace
 
-Section1:AddToggle({
-    text = "Hitbox Expander",
-    state = false,
-    risky = false,
-    tooltip = "tooltip1",
-    flag = "Toggle_1",
-    callback = function(v)
-        hitboxExpanderToggle = v
-        if not v then
-            hitbox.Size = originalSize
-            print(ValueText, "Hitbox reverted to original size.")
+
+local Window = Rayfield:CreateWindow({
+	Name = "JohnWARE | Vision",
+	LoadingTitle = "JohnWARE | Vision",
+	LoadingSubtitle = "jaxel and co.",
+	ConfigurationSaving = {
+		Enabled = true,
+		FolderName = "JohnWARE",
+		FileName = "Vision Hub"
+	},
+	KeySystem = false, -- Set this to true to use their key system
+	KeySettings = {
+		Title = "Sirius Hub",
+		Subtitle = "Key System",
+		Note = "Join the discord (discord.gg/sirius)",
+		SaveKey = true,
+		Key = "ABCDEF"
+	}
+})
+
+Rayfield:Notify("Title Example", "Content/Description Example", 4483362458) -- Notfication -- Title, Content, Image
+
+local Tab = Window:CreateTab("Goalkeeper", 4483362458) -- Title, Image
+local Tab2 = Window:CreateTab("Striker", 4483362458) -- Title, Image
+
+local Section = Tab:CreateSection("Hitbox")
+local Section = Tab2:CreateSection("Blatant")
+
+--[[local Button1 = Tab2:CreateButton({
+	Name = "TP to Enemy Goal",
+	Callback = function()
+		local playerName = game.Players.LocalPlayer.Name
+        local plr = game.Players:FindFirstChild(playerName)
+        local team = plr and plr.Team -- Ensures 'plr' exists before accessing Team
+    print("Player's team is:", team)
+    if team.Name == "Team 1" then
+        humanoidRootPart.CFrame = redPart.CFrame
         else
-            hitbox.Size = Vector3.new(hitboxWidth, hitboxHeight, hitboxLength)
-        end
+        humanoidRootPart.CFrame = bluePart.CFrame
     end
-}):AddBind({
-    enabled = false,
-    text = "Keybind1",
-    tooltip = "tooltip1",
-    mode = "toggle",
-    bind = "None",
-    flag = "ToggleKey_1",
-    state = false,
-    nomouse = false,
-    risky = false,
-    noindicator = false,
-    callback = function(v)
-        print(ValueText, v)
-    end,
-    keycallback = function(v)
-        print(ValueText, v)
-    end
+end,
+})]]--
+
+
+local Toggle1 = Tab:CreateToggle({
+	Name = "Toggle Hitbox Extender",
+	CurrentValue = false,
+	Flag = "ToggleHBGK", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Value)
+	end,
 })
 
-Section1:AddBox({
-    enabled = false,
-    name = "TextBox1",
-    flag = "TextBox_1",
-    input = "PlaceHolder1",
-    focused = false,
-    risky = false,
-    callback = function(v)
-        print(ValueText, v)
-    end
-})
+local isLooping = false -- Flag to control the loop
 
-Section1:AddSeparator({
-    enabled = false,
-    text = "Separator1"
-})
+local Toggle2 = Tab2:CreateToggle({
+    Name = "Toggle Loop Tackle",
+    CurrentValue = false,
+    Flag = "ToggleLT", -- A flag is the identifier for the configuration file
+    Callback = function(Value)
+        isLooping = Value -- Set the looping flag based on the toggle state
 
-Section1:AddButton({
-    enabled = false,
-    text = "Button1",
-    tooltip = "tooltip1",
-    confirm = true,
-    risky = false,
-    callback = function()
-        print("Pressed!")
-    end
-})
-
-Section1:AddSlider({
-    enabled = true,
-    text = "Hitbox Width",
-    tooltip = "Width of your hitbox.",
-    flag = "Slider_Width",
-    suffix = " Studs",
-    dragging = true,
-    focused = false,
-    min = 1,
-    max = 15,
-    increment = 1,
-    risky = false,
-    callback = function(v)
-        -- Only set the hitbox width if the toggle is active
-        if hitboxExpanderToggle then
-            hitboxWidth = v -- Update the width value
-            hitbox.Size = Vector3.new(hitboxWidth, hitboxHeight, hitboxLength) -- Update hitbox size
-            print(ValueText, "Width set to:", hitboxWidth)
-        else
-            print(ValueText, "Hitbox Expander is not enabled. Slider is inactive.")
-        end
-    end
-})
-
-Section1:AddSlider({
-    enabled = true,
-    text = "Hitbox Height",
-    tooltip = "Height of your hitbox.",
-    flag = "Slider_Height",
-    suffix = " Studs",
-    dragging = true,
-    focused = false,
-    min = 1,
-    max = 15,
-    increment = 1,
-    risky = false,
-    callback = function(v)
-        if hitboxExpanderToggle then
-            hitboxHeight = v
-            hitbox.Size = Vector3.new(hitboxWidth, hitboxHeight, hitboxLength)
-            print(ValueText, "Height set to:", hitboxHeight)
-        else
-            print(ValueText, "Hitbox Expander is not enabled. Slider is inactive.")
+        if isLooping then
+            -- If the toggle is turned on, start the loop in a new coroutine
+            coroutine.wrap(function()
+                while isLooping do
+                    wait(0.1) -- Wait for a short duration
+                    game:GetService("ReplicatedStorage").Remotes.tckl:FireServer()
+                    print("Tackled!")
+                end
+            end)() -- Start the coroutine
         end
     end
 })
 
-Section1:AddList({
-    enabled = false,
-    text = "Selection", 
-    tooltip = "tooltip1",
-    selected = "",
-    multi = false,
-    open = false,
-    max = 4,
-    values = {"1", "2", "3"},
-    risky = false,
-    callback = function(v)
-        print(ValueText, v)
+
+local Toggle3 = Tab2:CreateToggle({
+	Name = "Toggle Loop Tackle + TP to Ball",
+	CurrentValue = false,
+	Flag = "ToggleLTTP",
+	Callback = function(Value)
+        isLooping = Value -- Set the looping flag based on the toggle state
+
+        if isLooping then
+            -- If the toggle is turned on, start the loop in a new coroutine
+            coroutine.wrap(function()
+                while isLooping do
+                    local currentRotation = humanoidRootPart.CFrame - humanoidRootPart.Position
+                    humanoidRootPart.CFrame = CFrame.new(ball.Position) * currentRotation -- Set only the position, preserving rotation
+                    wait(0.1) -- Wait for a short duration
+                    game:GetService("ReplicatedStorage").Remotes.tckl:FireServer()
+                    print("Tackled!")
+                end
+            end)() -- Start the coroutine
+        end
     end
 })
 
-Section1:AddColor({
-    enabled = false,
-    text = "Color1",
-    tooltip = "tooltip1",
-    color = Color3.fromRGB(255, 255, 255),
-    flag = "Color_1",
-    trans = 0,
-    open = false,
-    risky = false,
-    callback = function(v)
-        print(ValueText, v)
-    end
+local Section = Tab2:CreateSection("Hitbox")
+
+local Slider1 = Tab:CreateSlider({
+	Name = "Hitbox Width",
+	Range = {1, 15},
+	Increment = 1,
+	Suffix = "Studs",
+	CurrentValue = 1,
+	Flag = "SliderWidthGK", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(v)
+		-- The function that takes place when the slider changes
+    		-- The variable (Value) is a number which correlates to the value the slider is currently at
+	end,
 })
 
-local Time = (string.format("%."..tostring(Decimals).."f", os.clock() - Clock))
-library:SendNotification(("Loaded In "..tostring(Time)), 6)
+local Slider2 = Tab:CreateSlider({
+	Name = "Hitbox Length",
+	Range = {1, 15},
+	Increment = 1,
+	Suffix = "Studs",
+	CurrentValue = 1,
+	Flag = "SliderLengthGK", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(v)
+		-- The function that takes place when the slider changes
+    		-- The variable (Value) is a number which correlates to the value the slider is currently at
+	end,
+})
+
+local Label = Tab:CreateLabel("Label Example")
+
+local Paragraph = Tab:CreateParagraph({Title = "Paragraph Example", Content = "Paragraph Example"})
+
+local Input = Tab:CreateInput({
+	Name = "Input Example",
+	PlaceholderText = "Input Placeholder",
+	RemoveTextAfterFocusLost = false,
+	Callback = function(Text)
+		-- The function that takes place when the input is changed
+    		-- The variable (Text) is a string for the value in the text box
+	end,
+})
+
+local Keybind = Tab:CreateKeybind({
+	Name = "Keybind Example",
+	CurrentKeybind = "Q",
+	HoldToInteract = false,
+	Flag = "Keybind1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Keybind)
+		-- The function that takes place when the keybind is pressed
+    		-- The variable (Keybind) is a boolean for whether the keybind is being held or not (HoldToInteract needs to be true)
+	end,
+})
+
+local Dropdown = Tab:CreateDropdown({
+	Name = "Dropdown Example",
+	Options = {"Option 1","Option 2"},
+	CurrentOption = "Option 1",
+	Flag = "Dropdown1", -- A flag is the identifier for the configuration file, make sure every element has a different flag if you're using configuration saving to ensure no overlaps
+	Callback = function(Option)
+	  	  -- The function that takes place when the selected option is changed
+    	  -- The variable (Option) is a string for the value that the dropdown was changed to
+	end,
+})
+
+local Button = Tab:CreateButton({
+	Name = "Destroy UI",
+	Callback = function()
+		Rayfield:Destroy()
+	end,
+})
+
+-- Extras
+
+-- getgenv().SecureMode = true -- Only Set To True If Games Are Detecting/Crashing The UI
+
+-- Rayfield:Destroy() -- Destroys UI
+
+-- Rayfield:LoadConfiguration() -- Enables Configuration Saving
+
+-- Section:Set("Section Example") -- Use To Update Section Text
+
+-- Button:Set("Button Example") -- Use To Update Button Text
+
+-- Toggle:Set(false) -- Use To Update Toggle
+
+-- Slider:Set(10) -- Use To Update Slider Value
+
+-- Label:Set("Label Example") -- Use To Update Label Text
+
+-- Paragraph:Set({Title = "Paragraph Example", Content = "Paragraph Example"}) -- Use To Update Paragraph Text
+
+-- Keybind:Set("RightCtrl") -- Keybind (string) -- Use To Update Keybind
+
+-- Dropdown:Set("Option 2") -- The new option value -- Use To Update/Set New Dropdowns
