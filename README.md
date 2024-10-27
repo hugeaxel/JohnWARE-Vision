@@ -1,7 +1,13 @@
 Update log 1:
 ----------------------
-Created the ui.
-Added Loop TP + Tackle
-Added Loop Tackle
+Changes
 ----------------------
-Started Work on GK Hitbox Expander
+- Created the ui.
+- Added Loop TP + Tackle
+- Added Loop Tackle
+----------------------
+To-Do
+----------------------
+- Start work on GK Hitbox Expander
+- Start work on the fun tab
+- Think of more features
